@@ -1,0 +1,31 @@
+resources:
+  jobs:
+    chubb_lakehouse_job:
+      name: chubb_lakehouse_job
+      tasks:
+        - task_key: 01_bronze_workflow
+          notebook_task:
+            notebook_path: /Workspace/Users/miguel.egk@outlook.com/chubb-retail-medallion-pipeline/src/workflows/01_bronze_workflow
+            source: WORKSPACE
+          environment_key: Default
+        - task_key: 02_silver_workflow
+          depends_on:
+            - task_key: 01_bronze_workflow
+          notebook_task:
+            notebook_path: /Workspace/Users/miguel.egk@outlook.com/chubb-retail-medallion-pipeline/src/workflows/02_silver_workflow
+            source: WORKSPACE
+          environment_key: Default
+        - task_key: 03_gold_workflow
+          depends_on:
+            - task_key: 02_silver_workflow
+          notebook_task:
+            notebook_path: /Workspace/Users/miguel.egk@outlook.com/chubb-retail-medallion-pipeline/src/workflows/03_gold_workflow
+            source: WORKSPACE
+          environment_key: Default
+      queue:
+        enabled: true
+      environments:
+        - environment_key: Default
+          spec:
+            environment_version: "6"
+      performance_target: PERFORMANCE_OPTIMIZED
